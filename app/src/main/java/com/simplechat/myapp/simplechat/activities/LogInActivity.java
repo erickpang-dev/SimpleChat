@@ -2,6 +2,7 @@ package com.simplechat.myapp.simplechat.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -10,7 +11,9 @@ import android.widget.EditText;
 import com.github.rtoshiro.util.format.SimpleMaskFormatter;
 import com.github.rtoshiro.util.format.text.MaskTextWatcher;
 import com.simplechat.myapp.simplechat.R;
+import com.simplechat.myapp.simplechat.helpers.Preferences;
 
+import java.util.HashMap;
 import java.util.Random;
 
 public class LogInActivity extends AppCompatActivity {
@@ -55,12 +58,40 @@ public class LogInActivity extends AppCompatActivity {
                 Random random = new Random();
                 int randomNumber = random.nextInt(9999-1000 ) + 1000;
                 String token = String.valueOf( randomNumber );
+                String tokenMessage = "Your validation code is: " + token;
 
-//                Log.i("LogInActivity", token);
+
+
+// saving data for validation
+                Preferences preferences = new Preferences( getApplicationContext() );
+                preferences.saveUserPreferences( userName, phoneNumberUnformatted, token );
+
+// send sms
+                phoneNumberUnformatted = "5554";
+                sendSMS("+" + phoneNumberUnformatted, tokenMessage);
+
+//                HashMap<String, String> user = preferences.getUserData();
+//                Log.i("LogInActivity", user.get( "token" ));
+
 
             }
         });
 
 
+
+
+
+    }
+    private boolean sendSMS(String phoneNumber, String message){
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phoneNumber, null, message, null, null);
+
+            return true;
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -1,5 +1,11 @@
 package com.simplechat.myapp.simplechat.activities;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
@@ -7,10 +13,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.github.rtoshiro.util.format.SimpleMaskFormatter;
 import com.github.rtoshiro.util.format.text.MaskTextWatcher;
+import com.simplechat.myapp.simplechat.Manifest;
 import com.simplechat.myapp.simplechat.R;
+import com.simplechat.myapp.simplechat.helpers.Permissions;
 import com.simplechat.myapp.simplechat.helpers.Preferences;
 
 import java.util.HashMap;
@@ -20,12 +29,17 @@ public class LogInActivity extends AppCompatActivity {
 
     private EditText usernameInput, phoneInput;
     private Button sendButton;
+    private String[] permissionsRequired = new String[]{
+            android.Manifest.permission.SEND_SMS
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
 
+// checking for permissions
+        Permissions.permissionsValidate(1,this, permissionsRequired);
 
 
 // linking layout objects with class objects
@@ -67,8 +81,14 @@ public class LogInActivity extends AppCompatActivity {
                 preferences.saveUserPreferences( userName, phoneNumberUnformatted, token );
 
 // send sms
-                phoneNumberUnformatted = "5554";
-                sendSMS("+" + phoneNumberUnformatted, tokenMessage);
+                boolean sentSMS = sendSMS("+" + phoneNumberUnformatted, tokenMessage);
+
+                if (sentSMS){
+                    Intent intent = new Intent(LogInActivity.this, ValidationActivity.class);
+                    startActivity( intent );
+                } else {
+                    Toast.makeText(LogInActivity.this, "SMS could not be sent.", Toast.LENGTH_SHORT).show();
+                }
 
 //                HashMap<String, String> user = preferences.getUserData();
 //                Log.i("LogInActivity", user.get( "token" ));
@@ -76,10 +96,6 @@ public class LogInActivity extends AppCompatActivity {
 
             }
         });
-
-
-
-
 
     }
     private boolean sendSMS(String phoneNumber, String message){
@@ -93,5 +109,30 @@ public class LogInActivity extends AppCompatActivity {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults){
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        for (int results : grantResults){
+            if (results == PackageManager.PERMISSION_DENIED){
+                permissionIsEssentialAlert();
+            }
+        }
+    }
+    private void permissionIsEssentialAlert(){
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder( this );
+        alertBuilder.setTitle("Pemissions denied");
+        alertBuilder.setMessage("You must grant access to all permissions to use this application.");
+        alertBuilder.setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+
+        AlertDialog dialog = alertBuilder.create();
+        dialog.show();
+
     }
 }

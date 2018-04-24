@@ -13,6 +13,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.auth.FirebaseUser;
 import com.simplechat.myapp.simplechat.R;
 import com.simplechat.myapp.simplechat.config.FirebaseConfiguration;
 import com.simplechat.myapp.simplechat.model.User;
@@ -28,7 +32,7 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-
+// layout and java objects link
         signupNameInput = findViewById(R.id.signupNameInputId);
         signupEmailInput = findViewById(R.id.signupEmailInputId);
         signupPasswordInput = findViewById(R.id.signupPasswordInputId);
@@ -57,6 +61,10 @@ public class SignUpActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
                     Toast.makeText(SignUpActivity.this, "Sign up successful. Returning to login page.", Toast.LENGTH_SHORT).show();
+                    FirebaseUser firebaseUser = task.getResult().getUser();
+                    user.setUserId( firebaseUser.getUid());
+                    user.save();
+                    firebaseAuth.signOut();
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -65,7 +73,21 @@ public class SignUpActivity extends AppCompatActivity {
                         }
                     }, 3000);
                 } else {
-                    Toast.makeText(SignUpActivity.this, "Sign up was not successful.", Toast.LENGTH_SHORT).show();
+// sign up error treatment
+                    String errorException = "";
+                    try {
+                        throw task.getException();
+                    } catch (FirebaseAuthWeakPasswordException e) {
+                        errorException = "Password not strong enough.";
+                    } catch (FirebaseAuthInvalidCredentialsException e) {
+                        errorException = "Invalid e-mail.";
+                    } catch (FirebaseAuthUserCollisionException e) {
+                        errorException = "E-mail already in use on this application.";
+                    } catch (Exception e) {
+                        errorException = "Sign up was not successful.";
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(SignUpActivity.this, errorException, Toast.LENGTH_SHORT).show();
                 }
             }
         });

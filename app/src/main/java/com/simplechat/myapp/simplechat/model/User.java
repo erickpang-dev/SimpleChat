@@ -1,5 +1,9 @@
 package com.simplechat.myapp.simplechat.model;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
+import com.simplechat.myapp.simplechat.config.FirebaseConfiguration;
+
 public class User {
 
     private String userId;
@@ -11,6 +15,13 @@ public class User {
 
     }
 
+    public void save(){
+        DatabaseReference firebaseReference = FirebaseConfiguration.getFirebase();
+        firebaseReference.child("users").child( getUserId() ).setValue( this );
+
+    }
+
+    @Exclude
     public String getUserId() {
         return userId;
     }
@@ -35,6 +46,7 @@ public class User {
         this.userEmail = userEmail;
     }
 
+    @Exclude
     public String getUserPassword() {
         return userPassword;
     }

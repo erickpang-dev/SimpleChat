@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.simplechat.myapp.simplechat.R;
 import com.simplechat.myapp.simplechat.configuration.FirebaseConfiguration;
+import com.simplechat.myapp.simplechat.helper.Base64Converter;
 import com.simplechat.myapp.simplechat.model.User;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -53,6 +54,7 @@ public class SignUpActivity extends AppCompatActivity {
         returnButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(SignUpActivity.this, "Returning to login page.", Toast.LENGTH_SHORT).show();
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -74,14 +76,14 @@ public class SignUpActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
                     Toast.makeText(SignUpActivity.this, "Sign up successful. Returning to login page.", Toast.LENGTH_SHORT).show();
-                    FirebaseUser firebaseUser = task.getResult().getUser();
-                    user.setUserId( firebaseUser.getUid());
+                    String userIdentifier = Base64Converter.base64Encode(user.getUserEmail());
+                    user.setUserId( userIdentifier );
                     user.save();
-                    firebaseAuth.signOut();
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            firebaseAuth.signOut();
                             finish();
                         }
                     }, 3000);

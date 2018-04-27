@@ -17,6 +17,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.simplechat.myapp.simplechat.R;
 import com.simplechat.myapp.simplechat.configuration.FirebaseConfiguration;
+import com.simplechat.myapp.simplechat.helper.Base64Converter;
+import com.simplechat.myapp.simplechat.helper.Preferences;
 import com.simplechat.myapp.simplechat.model.User;
 
 public class LogInActivity extends AppCompatActivity {
@@ -64,6 +66,11 @@ public class LogInActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
+// save user e-mail on preferences
+                    Preferences preferences = new Preferences(LogInActivity.this);
+                    String currentUserIdentifier = Base64Converter.base64Encode(user.getUserEmail());
+                    preferences.saveData(currentUserIdentifier);
+// send user to main activity
                     Toast.makeText(LogInActivity.this, "Login was successful. Sending to main screen.", Toast.LENGTH_SHORT).show();
                     Handler delay = new Handler();
                     delay.postDelayed(new Runnable() {
@@ -80,7 +87,7 @@ public class LogInActivity extends AppCompatActivity {
         });
     }
 
-    private void goToMainActivity() {
+    public void goToMainActivity() {
         Intent logInToMainActivity = new Intent(this, MainActivity.class);
         startActivity(logInToMainActivity);
         finish();

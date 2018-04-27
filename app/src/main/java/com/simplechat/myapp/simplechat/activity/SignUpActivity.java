@@ -1,5 +1,6 @@
 package com.simplechat.myapp.simplechat.activity;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.simplechat.myapp.simplechat.R;
 import com.simplechat.myapp.simplechat.configuration.FirebaseConfiguration;
 import com.simplechat.myapp.simplechat.helper.Base64Converter;
+import com.simplechat.myapp.simplechat.helper.Preferences;
 import com.simplechat.myapp.simplechat.model.User;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -75,16 +77,21 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-                    Toast.makeText(SignUpActivity.this, "Sign up successful. Returning to login page.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignUpActivity.this, "Sign up successful. Sending to main page.", Toast.LENGTH_SHORT).show();
                     String userIdentifier = Base64Converter.base64Encode(user.getUserEmail());
                     user.setUserId( userIdentifier );
                     user.save();
+// save user e-mail on preferences
+                    Preferences preferences = new Preferences(SignUpActivity.this);
+                    String currentUserIdentifier = Base64Converter.base64Encode(user.getUserEmail());
+                    preferences.saveData(currentUserIdentifier);
+// send to main activity
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            firebaseAuth.signOut();
-                            finish();
+                        Intent signUpToMainActivity = new Intent(SignUpActivity.this, MainActivity.class);
+                        startActivity(signUpToMainActivity);
                         }
                     }, 3000);
                 } else {

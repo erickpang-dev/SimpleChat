@@ -12,9 +12,7 @@ public class Preferences {
     private String FILE_NAME = "applicationdata";
     private int MODE = 0;
     private SharedPreferences.Editor editor;
-    private String NAME_KEY = "username";
-    private String PHONE_NUMBER_KEY = "phonenumber";
-    private String TOKEN_KEY = "token";
+    private String IDENTIFIER_KEY = "currentUserIdentifier";
 
     public Preferences ( Context contextParameter ){
 
@@ -24,21 +22,14 @@ public class Preferences {
 
     }
 
-    public void saveUserPreferences( String userName, String phoneNumber, String token ){
-        editor.putString( NAME_KEY, userName );
-        editor.putString( PHONE_NUMBER_KEY, phoneNumber );
-        editor.putString( TOKEN_KEY, token );
+    public void saveData( String userIdentifier ){
+        editor.putString( IDENTIFIER_KEY, userIdentifier );
         editor.commit();
 
     }
 
-    public HashMap<String, String> getUserData(){
-
-        HashMap<String, String> userData = new HashMap<>();
-
-        userData.put(NAME_KEY, preferences.getString(NAME_KEY, null));
-        userData.put(PHONE_NUMBER_KEY, preferences.getString(PHONE_NUMBER_KEY, null));
-        userData.put(TOKEN_KEY, preferences.getString(TOKEN_KEY, null));
-        return userData;
+    public String getCurrentUserIdentifier (){
+        return preferences.getString(IDENTIFIER_KEY, null);
     }
+
 }

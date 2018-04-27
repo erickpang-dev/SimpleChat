@@ -1,4 +1,4 @@
-package com.simplechat.myapp.simplechat.activities;
+package com.simplechat.myapp.simplechat.activity;
 
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.simplechat.myapp.simplechat.R;
-import com.simplechat.myapp.simplechat.config.FirebaseConfiguration;
+import com.simplechat.myapp.simplechat.configuration.FirebaseConfiguration;
 import com.simplechat.myapp.simplechat.model.User;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -47,6 +47,19 @@ public class SignUpActivity extends AppCompatActivity {
                 user.setUserEmail(signupEmailInput.getText().toString());
                 user.setUserPassword(signupPasswordInput.getText().toString());
                 signupUser();
+            }
+        });
+
+        returnButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                }, 3000);
             }
         });
     }

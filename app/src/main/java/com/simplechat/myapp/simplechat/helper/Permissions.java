@@ -1,4 +1,4 @@
-package com.simplechat.myapp.simplechat.helpers;
+package com.simplechat.myapp.simplechat.helper;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;

@@ -1,4 +1,4 @@
-package com.simplechat.myapp.simplechat.config;
+package com.simplechat.myapp.simplechat.configuration;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;

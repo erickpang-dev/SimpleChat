@@ -1,4 +1,4 @@
-package com.simplechat.myapp.simplechat.activities;
+package com.simplechat.myapp.simplechat.activity;
 
 
 import android.content.Intent;
@@ -15,9 +15,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.simplechat.myapp.simplechat.R;
-import com.simplechat.myapp.simplechat.config.FirebaseConfiguration;
+import com.simplechat.myapp.simplechat.configuration.FirebaseConfiguration;
 import com.simplechat.myapp.simplechat.model.User;
 
 public class LogInActivity extends AppCompatActivity {

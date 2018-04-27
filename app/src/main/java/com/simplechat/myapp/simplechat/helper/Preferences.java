@@ -1,4 +1,4 @@
-package com.simplechat.myapp.simplechat.helpers;
+package com.simplechat.myapp.simplechat.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;

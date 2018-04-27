@@ -2,7 +2,7 @@ package com.simplechat.myapp.simplechat.model;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
-import com.simplechat.myapp.simplechat.config.FirebaseConfiguration;
+import com.simplechat.myapp.simplechat.configuration.FirebaseConfiguration;
 
 public class User {
 

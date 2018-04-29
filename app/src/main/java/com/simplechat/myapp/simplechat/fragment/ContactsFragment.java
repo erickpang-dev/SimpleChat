@@ -6,25 +6,99 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.simplechat.myapp.simplechat.R;
+import com.simplechat.myapp.simplechat.activity.MainActivity;
+import com.simplechat.myapp.simplechat.adapter.ContactAdapter;
+import com.simplechat.myapp.simplechat.configuration.FirebaseConfiguration;
+import com.simplechat.myapp.simplechat.helper.Base64Converter;
+import com.simplechat.myapp.simplechat.helper.Preferences;
+import com.simplechat.myapp.simplechat.model.Contact;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ContactsFragment extends Fragment {
 
+    private ListView contactsListView;
+    private ArrayAdapter arrayAdapter;
+    private ArrayList<Contact> contactArray;
+    private DatabaseReference databaseReference;
+    private ValueEventListener valueEventListenerContacts;
 
     public ContactsFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        databaseReference.addValueEventListener(valueEventListenerContacts);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        databaseReference.removeEventListener(valueEventListenerContacts);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        contactArray = new ArrayList<>();
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_contacts, container, false);
+        View view = inflater.inflate(R.layout.fragment_contacts, container, false);
+
+        contactsListView = view.findViewById(R.id.contactsListViewId);
+
+//        arrayAdapter = new ArrayAdapter(
+//                getActivity(),
+//                R.layout.contact_list,
+//                contactArray
+//        );
+
+        arrayAdapter = new ContactAdapter(getActivity(),contactArray);
+
+        contactsListView.setAdapter(arrayAdapter);
+// get current user identifier
+        Preferences preferences = new Preferences(getActivity());
+        String currentUserIdentifier = preferences.getCurrentUserIdentifier();
+
+// get contacts from firebase database
+        databaseReference = FirebaseConfiguration.getFirebase();
+        databaseReference = databaseReference.child("contacts").child(currentUserIdentifier);
+
+// set listener for contacts on firebase
+        valueEventListenerContacts = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+// clear list to prevent repeated items
+                contactArray.clear();
+// add contact name to listview
+                for (DataSnapshot data: dataSnapshot.getChildren()){
+                    Contact contact = data.getValue(Contact.class);
+                    contactArray.add( contact );
+                }
+// notify adapter for list changes
+                arrayAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        return view;
     }
 
 }

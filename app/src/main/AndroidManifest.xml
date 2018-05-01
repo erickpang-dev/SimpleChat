@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.LogInActivity"
+        <activity
+            android:name=".activity.LogInActivity"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,6 +20,13 @@
         </activity>
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.SignUpActivity" />
+        <activity android:name=".activity.ChatActivity"
+            android:parentActivityName=".activity.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.simplechat.myapp.simplechat.activity.MainActivity">
+            </meta-data>
+        </activity>
     </application>
 
 </manifest>

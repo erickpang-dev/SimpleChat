@@ -1,11 +1,13 @@
 package com.simplechat.myapp.simplechat.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -14,6 +16,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.simplechat.myapp.simplechat.R;
+import com.simplechat.myapp.simplechat.activity.ChatActivity;
 import com.simplechat.myapp.simplechat.activity.MainActivity;
 import com.simplechat.myapp.simplechat.adapter.ContactAdapter;
 import com.simplechat.myapp.simplechat.configuration.FirebaseConfiguration;
@@ -97,6 +100,19 @@ public class ContactsFragment extends Fragment {
 
             }
         };
+
+        contactsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Contact contact = contactArray.get(position);
+
+                Intent ContactToChatActivity = new Intent(getActivity(), ChatActivity.class);
+                ContactToChatActivity.putExtra("contactName", contact.getContactName());
+                ContactToChatActivity.putExtra("contactEmail", contact.getContactEmail());
+
+                startActivity(ContactToChatActivity);
+            }
+        });
 
         return view;
     }

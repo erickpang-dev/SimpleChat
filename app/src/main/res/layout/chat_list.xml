@@ -18,8 +18,8 @@
         android:paddingBottom="4dp" />
 
     <TextView
-        android:id="@+id/contactEmailId"
-        android:text="Email"
+        android:id="@+id/latestMessageId"
+        android:text="Latest message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@android:color/darker_gray"

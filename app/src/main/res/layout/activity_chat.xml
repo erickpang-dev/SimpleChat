@@ -9,8 +9,7 @@
 
     <include
         android:id="@+id/toolbarId"
-        layout="@layout/toolbar"
-        ></include>
+        layout="@layout/toolbar" />
 
     <ListView
         android:id="@+id/chatMessageListId"
@@ -18,7 +17,8 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/linearLayoutMessageBarId"
         android:layout_below="@+id/toolbarId"
-        android:padding="8dp"></ListView>
+        android:padding="8dp"
+        android:divider="@android:color/transparent"/>
 
     <LinearLayout
         android:id="@+id/linearLayoutMessageBarId"

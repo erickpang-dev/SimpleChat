@@ -63,12 +63,6 @@ public class ContactsFragment extends Fragment {
 
         contactsListView = view.findViewById(R.id.contactsListViewId);
 
-//        arrayAdapter = new ArrayAdapter(
-//                getActivity(),
-//                R.layout.contact_list,
-//                contactArray
-//        );
-
         arrayAdapter = new ContactAdapter(getActivity(),contactArray);
 
         contactsListView.setAdapter(arrayAdapter);

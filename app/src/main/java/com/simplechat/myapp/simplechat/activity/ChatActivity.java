@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.simplechat.myapp.simplechat.R;
+import com.simplechat.myapp.simplechat.adapter.TextMessageAdapter;
 import com.simplechat.myapp.simplechat.configuration.FirebaseConfiguration;
 import com.simplechat.myapp.simplechat.helper.Base64Converter;
 import com.simplechat.myapp.simplechat.helper.Preferences;
@@ -30,8 +31,8 @@ public class ChatActivity extends AppCompatActivity {
     private ImageButton sendButton;
     private DatabaseReference databaseReference;
     private ListView chatMessageList;
-    private ArrayList<String> messageArray;
-    private ArrayAdapter arrayAdapter;
+    private ArrayList<TextMessage> messageArray;
+    private ArrayAdapter<TextMessage> arrayAdapter;
     private ValueEventListener valueEventListenerMessage;
 
 // recipient info
@@ -71,11 +72,7 @@ public class ChatActivity extends AppCompatActivity {
 
 // set up listview & adapter
         messageArray = new ArrayList<>();
-        arrayAdapter = new ArrayAdapter(
-                ChatActivity.this,
-                android.R.layout.simple_list_item_1,
-                messageArray
-        );
+        arrayAdapter = new TextMessageAdapter(ChatActivity.this, messageArray);
         chatMessageList.setAdapter(arrayAdapter);
 
 // get messages on firebase
@@ -93,7 +90,7 @@ public class ChatActivity extends AppCompatActivity {
 
                 for (DataSnapshot data: dataSnapshot.getChildren()){
                     TextMessage textMessage = data.getValue( TextMessage.class);
-                    messageArray.add(textMessage.getMessage());
+                    messageArray.add( textMessage );
                     arrayAdapter.notifyDataSetChanged();
                 }
 
@@ -121,7 +118,9 @@ public class ChatActivity extends AppCompatActivity {
                     textMessage.setUserId( senderUserId );
                     textMessage.setMessage( typedText );
 
+//save message for both users
                     saveMessage(senderUserId, recipientUserId, textMessage);
+                    saveMessage(recipientUserId, senderUserId, textMessage);
                     messageTextView.setText("");
 
                 }

@@ -20,6 +20,7 @@ import com.simplechat.myapp.simplechat.adapter.TextMessageAdapter;
 import com.simplechat.myapp.simplechat.configuration.FirebaseConfiguration;
 import com.simplechat.myapp.simplechat.helper.Base64Converter;
 import com.simplechat.myapp.simplechat.helper.Preferences;
+import com.simplechat.myapp.simplechat.model.Chat;
 import com.simplechat.myapp.simplechat.model.TextMessage;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class ChatActivity extends AppCompatActivity {
     private String recipientUserId;
 
 // sender info
+    private String senderUserName;
     private String senderUserId;
 
 
@@ -56,6 +58,7 @@ public class ChatActivity extends AppCompatActivity {
 // get logged in user data
         Preferences preferences = new Preferences(this);
         senderUserId = preferences.getCurrentUserIdentifier();
+        senderUserName = preferences.getCurrentUserName();
 
         Bundle contactInformation = getIntent().getExtras();
 
@@ -118,9 +121,36 @@ public class ChatActivity extends AppCompatActivity {
                     textMessage.setUserId( senderUserId );
                     textMessage.setMessage( typedText );
 
-//save message for both users
-                    saveMessage(senderUserId, recipientUserId, textMessage);
-                    saveMessage(recipientUserId, senderUserId, textMessage);
+// save message for both users
+                    Boolean currentUserMessageTest = saveMessage(senderUserId, recipientUserId, textMessage);
+                    if (!currentUserMessageTest) {
+                        Toast.makeText(ChatActivity.this, "Message could not be saved.", Toast.LENGTH_LONG).show();
+                    } else {
+                        Boolean contactUserMessageTest = saveMessage(recipientUserId, senderUserId, textMessage);
+                        if (!contactUserMessageTest){
+                            Toast.makeText(ChatActivity.this, "Message could not be sent.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+// save chat for both users
+                    Chat chatSender = new Chat();
+                    chatSender.setUserId(recipientUserId);
+                    chatSender.setUserName(recipientUserName);
+                    chatSender.setMessage(typedText);
+                    Boolean currentUserChatTest = saveChat(senderUserId, recipientUserId, chatSender);
+                    if (!currentUserChatTest){
+                        Toast.makeText(ChatActivity.this, "Chat could not be saved.", Toast.LENGTH_LONG).show();
+                    } else {
+                        Chat chatRecipient = new Chat();
+                        chatRecipient.setUserId(senderUserId);
+                        chatRecipient.setUserName(senderUserName);
+                        chatRecipient.setMessage(typedText);
+                        Boolean contactUserChatTest = saveChat(recipientUserId, senderUserId, chatRecipient);
+                        if (!contactUserChatTest){
+                            Toast.makeText(ChatActivity.this, "Chat could not be sent.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+
                     messageTextView.setText("");
 
                 }
@@ -130,13 +160,26 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    private Boolean saveMessage(String senderUserId, String recipientUserId, TextMessage message) {
+    private boolean saveMessage(String senderUserId, String recipientUserId, TextMessage message) {
         try{
             databaseReference = FirebaseConfiguration.getFirebase().child("messages");
             databaseReference.child( senderUserId )
                              .child( recipientUserId )
                              .push()
                              .setValue(message);
+            return true;
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private boolean saveChat(String senderUserId, String recipientUserId, Chat chat){
+        try {
+            databaseReference = FirebaseConfiguration.getFirebase().child("chats");
+            databaseReference.child( senderUserId )
+                             .child( recipientUserId )
+                             .setValue(chat);
             return true;
         } catch (Exception e){
             e.printStackTrace();

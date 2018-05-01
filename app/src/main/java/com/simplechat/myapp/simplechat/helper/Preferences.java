@@ -13,6 +13,7 @@ public class Preferences {
     private int MODE = 0;
     private SharedPreferences.Editor editor;
     private String IDENTIFIER_KEY = "currentUserIdentifier";
+    private String NAME_KEY = "currentUserName";
 
     public Preferences ( Context contextParameter ){
 
@@ -22,14 +23,19 @@ public class Preferences {
 
     }
 
-    public void saveData( String userIdentifier ){
+    public void saveData( String userIdentifier, String userName ){
         editor.putString( IDENTIFIER_KEY, userIdentifier );
+        editor.putString( NAME_KEY, userName );
         editor.commit();
 
     }
 
     public String getCurrentUserIdentifier (){
-        return preferences.getString(IDENTIFIER_KEY, null);
+        return preferences.getString( IDENTIFIER_KEY, null );
+    }
+
+    public String getCurrentUserName (){
+        return preferences.getString( NAME_KEY, null );
     }
 
 }

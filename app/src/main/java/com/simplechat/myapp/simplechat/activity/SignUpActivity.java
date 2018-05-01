@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.simplechat.myapp.simplechat.R;
 import com.simplechat.myapp.simplechat.configuration.FirebaseConfiguration;
 import com.simplechat.myapp.simplechat.helper.Base64Converter;
@@ -81,10 +82,11 @@ public class SignUpActivity extends AppCompatActivity {
                     String userIdentifier = Base64Converter.base64Encode(user.getUserEmail());
                     user.setUserId( userIdentifier );
                     user.save();
+
 // save user e-mail on preferences
                     Preferences preferences = new Preferences(SignUpActivity.this);
                     String currentUserIdentifier = Base64Converter.base64Encode(user.getUserEmail());
-                    preferences.saveData(currentUserIdentifier);
+                    preferences.saveData(currentUserIdentifier, user.getUserName());
 // send to main activity
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
